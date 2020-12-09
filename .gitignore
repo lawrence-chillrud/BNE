@@ -132,6 +132,9 @@ dmypy.json
 # ensure pesky mac files don't get uploaded
 .DS_Store
 */.DS_Store
+<<<<<<< HEAD
 
 # make sure we don't push the large data files...
+=======
+>>>>>>> 3e4cfa4799ef2a28a5ead50dbeb8f5eb52514316
 /code/data_ca/
