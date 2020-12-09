@@ -52,7 +52,7 @@ from jax import grad, jit, vmap, random, hessian
 import jax
 #JAX_ENABLE_X64=True
 
-DATA_DIR = "/Users/adityamakkar/Desktop/research/Ensemble/data_ca"
+DATA_DIR = "data_ca"
 RESULTS_DIR = "./results/calibre_2d_annual_pm25_example"
 
 MODEL_DICTIONARY = {"root": ["AV", "GS", "CM"]}
