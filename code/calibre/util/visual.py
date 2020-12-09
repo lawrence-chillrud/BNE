@@ -14,9 +14,9 @@ import statsmodels.nonparametric.api as smnp
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from calibre.calibration import coverage
+#from calibre.calibration import coverage
 
-import calibre.util.metric as metric_util
+#import calibre.util.metric as metric_util
 
 from matplotlib.colors import BoundaryNorm
 
