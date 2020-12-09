@@ -1,3 +1,5 @@
+import numpy as np
+
 def get_parent_node_names(family_tree):
     """Get names of non-leaf nodes of input family tree.
 
