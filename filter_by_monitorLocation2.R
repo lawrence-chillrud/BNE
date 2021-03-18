@@ -109,7 +109,7 @@ if(user == "STR"){
 # 1a Set parameters
 if(user == "LGC"){
   InputmodelShape <- "CensusTracts"
-  LocKeyVar <- c('lat', 'long', 'fips') 
+  LocKeyVar <- c('lat', 'long', 'FIPS') 
   # Lawrence, I think we can actually just use fips here 
   # LocKeyVar would have to include year if year is relevant 
 }
@@ -169,11 +169,10 @@ if(InputmodelShape == "impliedGrid"){
 # 3c Convert Census tract id's to polygons 
 if(InputmodelShape == "CensusTracts"){
   # 3c.i Readin Census data 
-  Censustract.loc <- read_sf("tl_2015_us_ttract")
+  Censustract.loc <- read_sf("cb_2019_us_tract_500k")
   # maybe we need to change a variable name here to get fips 
   # 3c.ii Join with Input model 
-  Inputlocations.tract <- Censustract.loc %>% 
-    inner_join(InputLocations, by = "fips")
+  InputLocations.tract <- inner_join(Censustract.loc, InputLocations, by = c("GEOID" = "FIPS"))
   # 3c.iii Transform geographical coordinates to Lambert Azimuth Equal Area Projection
   InputLocations.tract <- st_transform(InputLocations.tract, crs=st_crs(projString))
   # 3c.iv Store 
