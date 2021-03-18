@@ -79,9 +79,9 @@ if(user == "LGC"){
   MonitorLocations.sf <- rbind(MonitorLocations.sf.NAD83.as.WGS84, 
                                MonitorLocations.sf.WGS84)
   
-  MonitorLocations.Int.sf <- st_as_sf(MonitorLocations.Int, 
-                                      coords = c("long", "lat"), 
-                                      crs=st_crs("+init=epsg:4326"))
+  #MonitorLocations.Int.sf <- st_as_sf(MonitorLocations.Int, 
+                                      #coords = c("long", "lat"), 
+                                      #crs=st_crs("+init=epsg:4326"))
 }
 
 if(user == "STR"){
@@ -104,15 +104,11 @@ if(user == "STR"){
 #### 2: Simplify Data ####
 ####**********************
 
-# 2a Create location variable 
+# 2a Keep only the unique locations
 # can add year here if loc might change year to year 
-InputData <- InputData %>% 
-  mutate(loc = paste0(lat, "_", long)) 
-
-# 2b Keep only the unique locations
 InputLocations <- InputData %>%
-  distinct(loc, lat, long) %>% 
-  mutate(Index = row_number()) 
+  distinct(lat, long) %>% 
+  mutate(loc = paste0(lat, "_", long), Index = row_number()) 
 
 ####****************************************************
 #### 3: Convert Input Model Data to Spatial Polygon ####
@@ -141,11 +137,11 @@ if(InputmodelShape == "impliedGrid"){
 # 3b Convert Census tract id's to polygons 
 if(InputmodelShape == "CensusTracts"){
   # 3b.i Readin Census data 
-  Censustract.loc <- read_sf(X)
+  Censustract.loc <- read_sf("tl_2015_us_ttract")
   # maybe we need to change a variable name here to get fips 
   # 3b.ii Join with Input model 
   Inputlocations.tract <- Censustract.loc %>% 
-    inner_join(Inputlocations, by = "fips")
+    inner_join(InputLocations, by = "fips")
   # 3b.iii Transform geographical coordinates to Lambert Azimuth Equal Area Projection
   InputLocations.tract <- st_transform(InputLocations.tract, crs=st_crs(projString))
   # 3b.iv Store 
