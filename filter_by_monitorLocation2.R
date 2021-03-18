@@ -218,10 +218,11 @@ InputData.wMonitor <- InputData %>%
 ####*********************
 
 # 7a Get name 
-a <- stringr::str_split(InputDataPath, "/")
+InputName0 <- stringr::str_split(InputDataPath, "/")
+InputName1 <- InputName0[[1]][length(InputName0[[1]])]
+InputName2 <- stringr::str_split(InputName1, ".")
+InputName <- InputName2[[1]][1]
 
-InputName <- a[[1]][length(a[[1]])]
-InputName <- str_sub(InputName, 0, -5)
 # 7b Save 
 InputData.wMonitor %>% 
   fst::write_fst(here::here(paste0("data/", InputName, "_atMonitors.fst")))
