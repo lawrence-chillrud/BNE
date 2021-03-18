@@ -137,3 +137,6 @@ dmypy.json
 /code/data_ca/
 /code/data_ca-20201209T200644Z-001.zip
 /code/results/
+.Rproj.user
+
+/data/
