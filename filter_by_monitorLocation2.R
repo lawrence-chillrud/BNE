@@ -47,7 +47,6 @@ if(user == "LGC"){
   # set parameters
   InputDataPath <- here::here("CMAQ/outputs/2011_pm25_daily_average.csv")
   MonitorLocationsPath <- here::here("EPA_data/latest_version_clean_annual_data/annual_data_2000-2016.csv")
-  DataStructure <- "oneFile long"
   InputmodelShape <- "CensusTracts"
   
   # import data:
@@ -86,18 +85,16 @@ if(user == "LGC"){
 
 if(user == "STR"){
   # set parameters
-  InputDataPath <- "Data/predictions_MERRA.csv"
-  MonitorLocationPath <- "Data/EPA_monitor_data/annual_75.csv"
-  DataStructure <- "oneFile wide"
+  InputDataPath <- "data/predictions_MERRA.csv"
+  MonitorLocationsPath <- "data/annual_75.csv"
   InputmodelShape <- "impliedGrid"
   
   # readin 
   InputData <- read_csv(here::here(InputDataPath))
-  MonitorLocation <- read_csv(here::here(MonitorLocationPath))
+  MonitorLocations <- read_csv(here::here(MonitorLocationsPath))
   
-  InputData  <- 
   # rename
-  MonitorLocation <- MonitorLocation %>%
+  MonitorLocations <- MonitorLocations %>%
     rename(lat = Latitude, long = Longitude)
   
 }  
@@ -159,8 +156,8 @@ if(InputmodelShape == "CensusTracts"){
 ####***************************************************
 
 # 4a Convert Monitor locations to simple feature
-MonitorLocations <- st_as_sf(MonitorLocation, coords = c("long", "lat"), 
-                            crs=st_crs("+init=epsg:4326"))
+MonitorLocations <- st_as_sf(MonitorLocations, coords = c("long", "lat"), 
+                            crs=st_crs("epsg:4326"))
 
 # 4b Transform geographical coordinates to Lambert Azimuth Equal Area Projection
 MonitorLocations <- st_transform(MonitorLocations, crs=st_crs(projString))
@@ -186,15 +183,19 @@ activeLoc <- monitors_in_input$loc
 #### 6: Keep Relevant Observations ####
 ####***********************************
 
+# 6a Filter
 InputData.wMonitor <- InputData %>% 
   filter(loc %in% activeLoc)
-# now we readin whatever are the relevant files 
-
-# and then we apply the filtering statement 
-
-# with a vector tof the active locations 
 
 ####*********************
 #### 7: Save Results ####
 ####*********************
 
+# 7a Get name 
+a <- stringr::str_split(InputDataPath, "/")
+
+InputName <- a[[1]][length(a[[1]])]
+InputName <- str_sub(InputName, 0, -5)
+# 7b Save 
+InputData.wMonitor %>% 
+  fst::write_fst(here:here(paste0("data/", InputName, "_atMonitors.fst")))
