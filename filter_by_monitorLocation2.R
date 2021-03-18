@@ -32,7 +32,7 @@
 ####********************
 
 # 0a Load packages
-pacman::p_load(tidyverse, sf)
+pacman::p_load(tidyverse, sf, rgdal)
 
 # 0b Whose Computer? 
 user <- "STR" # LGC
@@ -51,11 +51,12 @@ if(user == "LGC"){
   InputmodelShape <- "CensusTracts"
   
   # import data:
-  InputData <- read_csv(InputDataPath, col_types = "Dcdddd")
+  InputData <- read_csv(InputDataPath, col_types = "Dcdddd") %>% rename(lat = Latitude, long = Longitude)
   # note: we should do this sort of cleaning in a different script so that we have one file we use for everything 
   MonitorLocations.Raw <- read_csv(MonitorLocationsPath) 
   MonitorLocations.Int <- MonitorLocations.Raw %>% 
     select(!Arithmetic.Mean) %>% na.omit() %>% 
+    rename(lat = Latitude, long = Longitude) %>%
     filter(Year == 2011)
   MonitorsList <- unique(MonitorLocations.Int$Monitor.ID)
   
@@ -69,18 +70,18 @@ if(user == "LGC"){
   
   # standardize Lon Lat coords:
   MonitorLocations.sf.NAD83 <- SpatialPointsDataFrame(
-    coords = MonitorLocations.Int.NAD83[, c("Longitude", "Latitude")], 
+    coords = MonitorLocations.Int.NAD83[, c("long", "lat")], 
     data = MonitorLocations.Int.NAD83, proj4string = CRS("+init=epsg:4269"))
   MonitorLocations.sf.NAD83.as.WGS84 <- spTransform(MonitorLocations.sf.NAD83, 
                                                     CRS("+init=epsg:4326"))
   MonitorLocations.sf.WGS84 <- SpatialPointsDataFrame(
-    coords = MonitorLocations.Int.WGS84[, c("Longitude", "Latitude")], 
+    coords = MonitorLocations.Int.WGS84[, c("long", "lat")], 
     data = MonitorLocations.Int.WGS84, proj4string = CRS("+init=epsg:4326"))
   MonitorLocations.sf <- rbind(MonitorLocations.sf.NAD83.as.WGS84, 
                                MonitorLocations.sf.WGS84)
   
   MonitorLocations.Int.sf <- st_as_sf(MonitorLocations.Int, 
-                                      coords = c("Longitude", "Latitude"), 
+                                      coords = c("long", "lat"), 
                                       crs=st_crs("+init=epsg:4326"))
 }
 
